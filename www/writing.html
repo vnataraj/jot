@@ -85,6 +85,18 @@
 
 		<!-- Firebase Code -->
 		<script>
+			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
+			var myPriorityRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/priority');
+			var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
+
+			var priority = null;
+			myPriorityRef.child('priority').once('value', function(priority_snapshot) {
+				priority = priority_snapshot.val();
+			});
+			if (!priority) {
+				priority = 0;
+			}
+
 			var guid = (function() {
 				function s4() {
 					return Math.floor((1 + Math.random()) * 0x10000)
@@ -97,8 +109,6 @@
 				};
 			})();
 
-			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
-			var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
 
 			$('#submitButton').click(function (e) {
 					var user = Parse.User.current();
@@ -106,12 +116,17 @@
 						var name = fetchedUser.getUsername();
 						var text = $('#newPost').val();
 						var votes = 0;
-						var postGuid = guid();
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
 						if (!picture) {
-							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1"});
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: priority}).setPriority(priority);
+							// Update the priority in firebase and increment it by one
+							priority = priority+1;
+							myPriorityRef.child('priority').set(priority);
 						} else {
-							myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: priority}).setPriority(priority);
+							// Update the priority in firebase and increment it by one
+							priority = priority+1;
+							myPriorityRef.child('priority').set(priority);
 						}
 
 						$('#newPost').val('');
@@ -209,6 +224,11 @@
 			// Plus button has been clicked
 			$('body').on('click', '.fa-plus-circle', function() {
 				var postGuid = $(this).attr('value');
+				var postPrio = 0;
+				myDataRef.child(postGuid).child('priority').once('value', function(priority_snapshot) {
+					postPrio = priority_snapshot.val();
+				});
+
 				$('#container-'+postGuid).append(''+
 				'<div id="banner-wrapper-new">'+
 					'<div id="banner" class="box container" style="padding: 1em">'+
@@ -217,7 +237,7 @@
 									'<textarea name="nextNewPost" id="nextNewPost" placeholder="Type next paragraph here..." rows="4f"></textarea>'+
 									'<center>'+
 										'<div class="4u">'+
-											'<a class="button" id="newSubmitButton" onclick="submitNextPost()">Submit</a>'+
+											'<a class="button" id="newSubmitButton" onclick="submitNextPost('+postPrio+')">Submit</a>'+
 										'</div>'+
 									'</center>'+
 							'</div>'+
@@ -227,18 +247,31 @@
 				'<br>');
 			});
 
-			function submitNextPost() {
+			function submitNextPost(postPrio) {
+					var newPostPrio = null;
+					if (postPrio%2 != 0) {
+						newPostPrio = parseFloat(postPrio)+.1;
+					} else {
+						newPostPrio = Number(postPrio+"."+1);
+					}
+					alert(newPostPrio);
+
 					var user = Parse.User.current();
 					user.fetch().then(function(fetchedUser){
 						var name = fetchedUser.getUsername();
 						var text = $('#nextNewPost').val();
 						var votes = 0;
-						var postGuid = guid();
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
 						if (!picture) {
-							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1"});
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: newPostPrio}).setPriority(newPostPrio);
+							// Update the priority in firebase and increment it by one
+							priority = priority+1;
+							myPriorityRef.child('priority').set(priority);
 						} else {
-							myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: newPostPrio}).setPriority(newPostPrio);
+							// Update the priority in firebase and increment it by one
+							priority = priority+1;
+							myPriorityRef.child('priority').set(priority);
 						}
 						$('#banner-wrapper-new').remove();
 					}, function(error){
