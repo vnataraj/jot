@@ -119,7 +119,15 @@
 			myDataRef.on('child_added', function(snapshot) {
 				var message = snapshot.val();
 				// Add the vote data for the posting user
-				myVotesDataRef.child(message.postGuid).set({postGuid: message.postGuid, username: message.username, voted: false});
+				var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
+				myVotesDataRef.child(message.postGuid).once('value', function(vote_snapshot) {
+					var hasVoted = votes_snapshot.child('voted').val();
+					if (hasVoted != null) {
+					 	myVotesDataRef.child(message.postGuid).set({postGuid: message.postGuid, username: message.username, voted: hasVoted});
+					} else {
+					 	myVotesDataRef.child(message.postGuid).set({postGuid: message.postGuid, username: message.username, voted: false});
+					}
+				});
 
 				displayPosts(message.username, message.text, message.votes, message.postGuid);
 			});
@@ -153,7 +161,7 @@
   			var postGUID = $(this).attr('value');
 				var voteCurrentValue = $('#vote' + postGUID).text();
 
-				//TODO: If userVoted == false
+				// If userVoted == false, then upvote
 				var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
 				myVotesDataRef.child(postGUID).once('value', function(snapshot) {
 					var hasVoted = snapshot.child('voted').val();
