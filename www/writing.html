@@ -220,6 +220,14 @@
 						var myPostsDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
 						var newVoteCount = Number(voteCurrentValue)+1;
 						myPostsDataRef.child(postGUID).child('votes').set(newVoteCount);
+
+						// Mark up the priority now
+						myDataRef.child(postGUID).once('value', function(data_snapshot) {
+							var prio = data_snapshot.getPriority();
+							myDataRef.child(postGUID).setPriority(prio-.1);
+							location.reload();
+						});
+
 						$('#vote' + postGUID).text(newVoteCount);
 					}
 				});
@@ -241,6 +249,14 @@
 						var myPostsDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
 						var newVoteCount = Number(voteCurrentValue)-1;
 						myPostsDataRef.child(postGUID).child('votes').set(newVoteCount);
+
+						// Mark down the priority now
+						myDataRef.child(postGUID).once('value', function(data_snapshot) {
+							var prio = data_snapshot.getPriority();
+							myDataRef.child(postGUID).setPriority(prio+.1);
+							location.reload();
+						});
+
 						$('#vote' + postGUID).text(newVoteCount);
 					}
 				});
@@ -282,7 +298,6 @@
 					} else {
 						newPostPrio = Number(parseFloat(postPrio+"."+1));
 					}
-					alert(newPostPrio);
 
 					var user = Parse.User.current();
 					user.fetch().then(function(fetchedUser){
@@ -300,6 +315,7 @@
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
+							location.reload();
 						}
 						$('#banner-wrapper-new').remove();
 					}, function(error){
