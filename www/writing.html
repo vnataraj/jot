@@ -150,31 +150,56 @@
 					}
 				});
 
-				displayPosts(message.username, message.text, message.votes, postGuid, message.picture);
+				displayPosts(message.username, message.text, message.votes, postGuid, message.picture, message.parent);
 			});
 
-			function displayPosts(username, text, votes, postGuid, picture) {
-				$('#messagesDiv').append(''+
-				'<div id="container-'+postGuid+'">'+
-				'<div id="features-wrapper">'+
-					'<div class="container">'+
-						'<div class="row">'+
-							'<div class="2u">'+
-								'<center>'+
-									'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
-								'</center>'+
-							'</div>'+
+			function displayPosts(username, text, votes, postGuid, picture, isParent) {
+				if (isParent == false) {
+					$('#messagesDiv').append(''+
+					'<div id="container-'+postGuid+'" style="opacity: 0.5">'+
+					'<div id="features-wrapper">'+
+						'<div class="container">'+
+							'<div class="row">'+
+								'<div class="2u">'+
+									'<center>'+
+										'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
+										'</center>'+
+										'</div>'+
+										'<div class="3u"></div>'+
 
-							'<div class="10u">'+
-								'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i value="'+postGuid+'" class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
-									'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
-									'<br><strong>'+text+"</strong>"+
+								'<div class="7u">'+
+									'<div class="box feature" style="padding: 1em">'+
+										'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
+										'<br><strong>'+text+"</strong>"+
+										'</div>'+
+									'</div>'+
 								'</div>'+
 							'</div>'+
 						'</div>'+
-					'</div>'+
-				'</div>'+
-				'</div>');
+					'</div>');
+				} else {
+					$('#messagesDiv').append(''+
+					'<div id="container-'+postGuid+'">'+
+					'<div id="features-wrapper">'+
+						'<div class="container">'+
+							'<div class="row">'+
+								'<div class="2u">'+
+									'<center>'+
+										'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
+										'</center>'+
+										'</div>'+
+
+								'<div class="10u">'+
+									'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i value="'+postGuid+'" class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
+										'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
+										'<br><strong>'+text+"</strong>"+
+										'</div>'+
+									'</div>'+
+								'</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>');
+				}
 
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 			};
@@ -248,11 +273,14 @@
 			});
 
 			function submitNextPost(postPrio) {
-					var newPostPrio = null;
+					var newPostPrio = 0;
+					if (!postPrio) {
+						postPrio = 0;
+					}
 					if (postPrio%2 != 0) {
-						newPostPrio = parseFloat(postPrio)+.1;
+							newPostPrio = parseFloat(postPrio)+.1;
 					} else {
-						newPostPrio = Number(postPrio+"."+1);
+						newPostPrio = Number(parseFloat(postPrio+"."+1));
 					}
 					alert(newPostPrio);
 
@@ -263,12 +291,12 @@
 						var votes = 0;
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
 						if (!picture) {
-							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: newPostPrio}).setPriority(newPostPrio);
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: newPostPrio, parent: false}).setPriority(newPostPrio);
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
 						} else {
-							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: newPostPrio}).setPriority(newPostPrio);
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: newPostPrio, parent: false}).setPriority(newPostPrio);
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
