@@ -65,22 +65,27 @@
 
 
 		<!-- Writing Posts -->
-		<center>
-			<input type='text' id='nameInput' placeholder='Name'>
-			<input type='text' id='messageInput' placeholder='Message'>
-		</center>
 		<div id="messagesDiv"></div>
+		<div id="banner-wrapper">
+			<div id="banner" class="box container" style="padding: 1em">
+				<div class="row">
+					<div class="12u">
+							<textarea name="newPost" id="newPost" placeholder="Type next paragraph here..." rows="6"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
 
 
 		<!-- Firebase Code -->
 		<script>
 			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/');
-			$('#messageInput').keypress(function (e) {
+			$('#newPost').keypress(function (e) {
 				if (e.keyCode == 13) {
-					var name = $('#nameInput').val();
-					var text = $('#messageInput').val();
+					var text = $('#newPost').val();
 					myDataRef.push({name: name, text: text});
-					$('#messageInput').val('');
+					$('#newPost').val('');
 				}
 			});
 			myDataRef.on('child_added', function(snapshot) {
@@ -88,7 +93,7 @@
 				displayChatMessage(message.name, message.text);
 			});
 			function displayChatMessage(name, text) {
-				$('#messagesDiv').append('<div id="banner-wrapper"><div id="banner" class="box container"><div class="row"><div class="12u"><h6>'+name+'</h6></div></div></div><br>');
+				$('#messagesDiv').append('<div id="banner-wrapper"><div id="banner" class="box container" style="padding: 1em"><div class="row"><div class="12u"><h6>'+text+'</h6></div></div></div><br>');
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 			};
 		</script>
