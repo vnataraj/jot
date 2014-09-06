@@ -108,7 +108,8 @@
 						var votes = 0;
 						var postGuid = guid();
 						//myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
-						myDataRef.child(postGuid).set({username: name, text: text, votes: votes, postGuid: postGuid});
+						myDataRef.push({username: name, text: text, votes: votes});
+						//myDataRef.child(postGuid).set({username: name, text: text, votes: votes, postGuid: postGuid});
 						$('#newPost').val('');
 					}, function(error){
 						//Handle the error
@@ -118,18 +119,20 @@
 
 			myDataRef.on('child_added', function(snapshot) {
 				var message = snapshot.val();
+				var postGuid = snapshot.name();
+
 				// Add the vote data for the posting user
 				var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
-				myVotesDataRef.child(message.postGuid).once('value', function(vote_snapshot) {
+				myVotesDataRef.child(postGuid).once('value', function(vote_snapshot) {
 					var hasVoted = votes_snapshot.child('voted').val();
 					if (hasVoted != null) {
-					 	myVotesDataRef.child(message.postGuid).set({postGuid: message.postGuid, username: message.username, voted: hasVoted});
+					 	myVotesDataRef.child(postGuid).set({username: message.username, voted: hasVoted});
 					} else {
-					 	myVotesDataRef.child(message.postGuid).set({postGuid: message.postGuid, username: message.username, voted: false});
+					 	myVotesDataRef.child(postGuid).set({username: message.username, voted: false});
 					}
 				});
 
-				displayPosts(message.username, message.text, message.votes, message.postGuid);
+				displayPosts(message.username, message.text, message.votes, postGuid);
 			});
 
 			function displayPosts(username, text, votes, postGuid) {
