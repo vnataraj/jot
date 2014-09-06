@@ -18,12 +18,13 @@ function create(username, password, email){
 
 
 function login(username, password){
-  Parse.User.logIn("myname", "mypass", {
+  Parse.User.logIn(username, password, {
     success: function(user) {
       loginManager(logout(), null);
+      $('#login').submit();
     },
     error: function(user, error) {
-      // The login failed. Check error to see why.
+      alert("Error: " + error.code + " " + error.message);
     }
   });
 

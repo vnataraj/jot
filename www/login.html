@@ -65,17 +65,16 @@
     </div>
 
 
-    <!-- Signing Up -->
+    <!-- logging in -->
     <div id="messagesDiv"></div>
     <div id="banner-wrapper">
       <div id="banner" class="box container" style="padding: 1em">
         <div class="row">
           <div class="12u">
-            <form id="create" action="thanks.html">
+            <form id="login" action="index.html">
               Username <input type='text' id='username' placeholder='username'/>
               Password <input type='text' id='password' placeholder='password'/>
-              Email <input type='text' id='email' placeholder='username@email.com'/>
-              Sign Up <input type="button" id="signUpButton"/>
+              Login <input type="button" id="loginButton"/>
             </form>
           </div>
         </div>
@@ -86,35 +85,14 @@
     <!-- parse code -->
     <script>
 $(window).load(function() {
-    alert("parse initialized!");
   Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
 
 });
-$('#signUpButton').click(function(e){
-  alert("button clicked!!!!");
+$('#loginButton').click(function(e){
   var user = $('#username').val();
   var pass = $('#password').val();
-  var emai = $('#email').val();
-  create(user, pass, emai);
+  login(user, pass);
 });
-/*function create(username, password, email){
-  var user = new Parse.User();
-  user.set("username", username);
-  user.set("password", password);
-  user.set("email", email);
-  alert("here's a user!");
-  // other fields can be set just like with Parse.Object
-  user.signUp(null, {
-    success: function(user) {
-      $('#create').submit();
-    },
-    error: function(user, error) {
-      // Show the error message somewhere and let the user try again.
-      alert("Error: " + error.code + " " + error.message);
-    }
-  });
-};
-*/
     </script>
 
   </body>
