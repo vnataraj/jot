@@ -87,14 +87,25 @@
 		<script>
 			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
 			var myPriorityRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/priority');
+			var myLevelRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/level');
 			var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
+
+			var prevNum = 0;
 
 			var priority = null;
 			myPriorityRef.child('priority').once('value', function(priority_snapshot) {
 				priority = priority_snapshot.val();
 			});
-			if (!priority) {
+			if (!priority || priority ==null) {
 				priority = 0;
+			}
+
+			var level = null;
+			myLevelRef.child('level').once('value', function(level_snapshot) {
+				level = level_snapshot.val();
+			});
+			if (!level || level == null) {
+				level = 0;
 			}
 
 			var guid = (function() {
@@ -118,15 +129,19 @@
 						var votes = 0;
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
 						if (!picture) {
-							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: priority}).setPriority(priority);
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: priority, level: level}).setPriority(priority);
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
+							level = level+1;
 							myPriorityRef.child('priority').set(priority);
+							myLevelRef.child('level').set(level);
 						} else {
-							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: priority}).setPriority(priority);
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: priority, level: level}).setPriority(priority);
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
+							level = level+1;
+							myLevelRef.child('level').set(level);
 						}
 
 						$('#newPost').val('');
@@ -150,13 +165,22 @@
 					}
 				});
 
-				displayPosts(message.username, message.text, message.votes, postGuid, message.picture, message.parent);
+				displayPosts(message.username, message.text, message.votes, postGuid, message.picture, message.parent, message.level);
 			});
 
-			function displayPosts(username, text, votes, postGuid, picture, isParent) {
+			function displayPosts(username, text, votes, postGuid, picture, isParent, level) {
+
+				// Check if priority changed a level
+				if (level == null || level != prevNum) {
+					prevNum = level;
+					isParent = true;
+				} else {
+					isParent = false;
+				}
+
 				if (isParent == false) {
 					$('#messagesDiv').append(''+
-					'<div id="container-'+postGuid+'" style="opacity: 0.5">'+
+					'<div id="container-'+postGuid+'" style="opacity: 0.5;">'+
 					'<div id="features-wrapper">'+
 						'<div class="container">'+
 							'<div class="row">'+
@@ -224,7 +248,7 @@
 						// Mark up the priority now
 						myDataRef.child(postGUID).once('value', function(data_snapshot) {
 							var prio = data_snapshot.getPriority();
-							myDataRef.child(postGUID).setPriority(prio-.1);
+							myDataRef.child(postGUID).setPriority(prio-.100001);
 							location.reload();
 						});
 
@@ -253,7 +277,7 @@
 						// Mark down the priority now
 						myDataRef.child(postGUID).once('value', function(data_snapshot) {
 							var prio = data_snapshot.getPriority();
-							myDataRef.child(postGUID).setPriority(prio+.1);
+							myDataRef.child(postGUID).setPriority(prio+.100001);
 							location.reload();
 						});
 
@@ -266,8 +290,10 @@
 			$('body').on('click', '.fa-plus-circle', function() {
 				var postGuid = $(this).attr('value');
 				var postPrio = 0;
-				myDataRef.child(postGuid).child('priority').once('value', function(priority_snapshot) {
-					postPrio = priority_snapshot.val();
+				var postLevel = 0;
+				myDataRef.child(postGuid).once('value', function(priority_snapshot) {
+					postPrio = priority_snapshot.child('priority').val();
+					postLevel = priority_snapshot.child('level').val();
 				});
 
 				$('#container-'+postGuid).append(''+
@@ -278,7 +304,7 @@
 									'<textarea name="nextNewPost" id="nextNewPost" placeholder="Type next paragraph here..." rows="4f"></textarea>'+
 									'<center>'+
 										'<div class="4u">'+
-											'<a class="button" id="newSubmitButton" onclick="submitNextPost('+postPrio+')">Submit</a>'+
+											'<a class="button" id="newSubmitButton" onclick="submitNextPost('+postPrio+','+postLevel+')">Submit</a>'+
 										'</div>'+
 									'</center>'+
 							'</div>'+
@@ -288,7 +314,7 @@
 				'<br>');
 			});
 
-			function submitNextPost(postPrio) {
+			function submitNextPost(postPrio, postLevel) {
 					var newPostPrio = 0;
 					if (!postPrio) {
 						postPrio = 0;
@@ -306,12 +332,12 @@
 						var votes = 0;
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
 						if (!picture) {
-							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: newPostPrio, parent: false}).setPriority(newPostPrio);
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1", priority: newPostPrio, parent: false, level: postLevel}).setPriority(newPostPrio);
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
 						} else {
-							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: newPostPrio, parent: false}).setPriority(newPostPrio);
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: newPostPrio, parent: false, level: postLevel}).setPriority(newPostPrio);
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
