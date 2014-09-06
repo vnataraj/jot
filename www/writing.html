@@ -107,7 +107,8 @@
 						var text = $('#newPost').val();
 						var votes = 0;
 						var postGuid = guid();
-						myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
+						//myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
+						myDataRef.child(postGuid).set({username: name, text: text, votes: votes, postGuid: postGuid});
 						$('#newPost').val('');
 					}, function(error){
 						//Handle the error
@@ -118,7 +119,7 @@
 			myDataRef.on('child_added', function(snapshot) {
 				var message = snapshot.val();
 				// Add the vote data for the posting user
-				myVotesDataRef.push({postGuid: message.postGuid, user: message.username, voted: false});
+				myVotesDataRef.child(message.postGuid).set({postGuid: message.postGuid, username: message.username, voted: false});
 
 				displayPosts(message.username, message.text, message.votes, message.postGuid);
 			});
@@ -127,15 +128,15 @@
 				$('#messagesDiv').append(''+
 				'<div id="features-wrapper">'+
 					'<div class="container">'+
-						//'<div class="row">'+
-						//	'<div class="2u">'+
-						//		'<center>'+
-						//			'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
-						//		'</center>'+
-						//	'</div>'+
+						'<div class="row">'+
+							'<div class="2u">'+
+								'<center>'+
+									'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
+								'</center>'+
+							'</div>'+
 
-							'<div class="12u">'+
-								'<div class="box feature" style="padding: 1em">'+
+							'<div class="10u">'+
+								'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
 									'<img src="images/portrait.png" height="50px" width="50px"/><br>'+username+'<hr>'+
 									'<br><strong>'+text+"</strong>"+
 								'</div>'+
@@ -153,8 +154,18 @@
 				var voteCurrentValue = $('#vote' + postGUID).text();
 
 				//TODO: If userVoted == false
-				alert("TESTING: " + myVotesDataRef.child(postGUID));
-				$('#vote' + postGUID).text(Number(voteCurrentValue)+1);
+				var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
+				myVotesDataRef.child(postGUID).once('value', function(snapshot) {
+					var hasVoted = snapshot.child('voted').val();
+					if (!hasVoted) {
+						// Set firebase hasVoted to true
+						myVotesDataRef.child(postGUID).child('voted').set(true);
+						// Set num of votes up one
+						var myPostsDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
+						myPostsDataRef.child(postGUID).child('votes').set(Number(voteCurrentValue)+1);
+						$('#vote' + postGUID).text(Number(voteCurrentValue)+1);
+					}
+				});
 			});
 
 			// Down vote button has been clicked
