@@ -89,15 +89,36 @@
 			$('#submitButton').click(function (e) {
 					var name = "TEST_USERNAME";
 					var text = $('#newPost').val();
-					myDataRef.push({username: name, text: text});
+					var votes = 73;
+					myDataRef.push({username: name, text: text, votes: votes});
 					$('#newPost').val('');
 			});
 			myDataRef.on('child_added', function(snapshot) {
 				var message = snapshot.val();
-				displayPosts(message.username, message.text);
+				displayPosts(message.username, message.text, message.votes);
 			});
-			function displayPosts(username, text) {
-				$('#messagesDiv').append('<div id="banner-wrapper"><div id="banner" class="box container" style="padding: 1em"><div><img src="images/portrait.png" height="50px" width="50px"/></div><div class="row"><div class="12u"><h6>'+text+'</h6></div></div></div><br>');
+			function displayPosts(username, text, votes) {
+
+				$('#messagesDiv').append(''+
+				'<div id="features-wrapper">'+
+					'<div class="container">'+
+						'<div class="row">'+
+							'<div class="2u">'+
+								'<center>'+
+									'<div class="box feature" style="padding: 1em"><i class="fa fa-arrow-circle-o-up fa-2x"></i><p><font size="6">'+votes+'</font></p><i class="fa fa-arrow-circle-o-down fa-2x"></i></div>'+
+								'</center>'+
+							'</div>'+
+
+							'<div class="10u">'+
+								'<div class="box feature" style="padding: 1em">'+
+									'<img src="images/portrait.png" height="50px" width="50px"/>'+
+									'<br>'+text+
+								'</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+				'</div>');
+
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 			};
 		</script>
