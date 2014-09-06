@@ -16,6 +16,8 @@
 		<script src="js/skel.min.js"></script>
 		<script src="js/skel-layers.min.js"></script>
 		<script src="js/init.js"></script>
+		<script src="js/parse/parse-1.2.19.js"></script>
+		<script src="js/parse/functions.js"></script>
 		<noscript>
 			<link rel="stylesheet" href="css/skel.css" />
 			<link rel="stylesheet" href="css/style.css" />
@@ -95,17 +97,29 @@
 				};
 			})();
 
-			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/');
+			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
+			var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
+
 			$('#submitButton').click(function (e) {
-					var name = "TEST_USERNAME";
-					var text = $('#newPost').val();
-					var votes = 0;
-					var postGuid = guid();
-					myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
-					$('#newPost').val('');
+					var user = Parse.User.current();
+					user.fetch().then(function(fetchedUser){
+						var name = fetchedUser.getUsername();
+						var text = $('#newPost').val();
+						var votes = 0;
+						var postGuid = guid();
+						myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
+						$('#newPost').val('');
+					}, function(error){
+						//Handle the error
+						alert("Authentication error. Please sign in to post.");
+					});
 			});
+
 			myDataRef.on('child_added', function(snapshot) {
 				var message = snapshot.val();
+				// Add the vote data for the posting user
+				myVotesDataRef.push({postGuid: message.postGuid, user: message.username, voted: false});
+
 				displayPosts(message.username, message.text, message.votes, message.postGuid);
 			});
 
@@ -113,17 +127,17 @@
 				$('#messagesDiv').append(''+
 				'<div id="features-wrapper">'+
 					'<div class="container">'+
-						'<div class="row">'+
-							'<div class="2u">'+
-								'<center>'+
-									'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
-								'</center>'+
-							'</div>'+
+						//'<div class="row">'+
+						//	'<div class="2u">'+
+						//		'<center>'+
+						//			'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
+						//		'</center>'+
+						//	'</div>'+
 
-							'<div class="10u">'+
+							'<div class="12u">'+
 								'<div class="box feature" style="padding: 1em">'+
-									'<img src="images/portrait.png" height="50px" width="50px"/>'+
-									'<br>'+text+
+									'<img src="images/portrait.png" height="50px" width="50px"/><br>'+username+'<hr>'+
+									'<br><strong>'+text+"</strong>"+
 								'</div>'+
 							'</div>'+
 						'</div>'+
@@ -139,6 +153,7 @@
 				var voteCurrentValue = $('#vote' + postGUID).text();
 
 				//TODO: If userVoted == false
+				alert("TESTING: " + myVotesDataRef.child(postGUID));
 				$('#vote' + postGUID).text(Number(voteCurrentValue)+1);
 			});
 
@@ -147,8 +162,15 @@
 				var postGUID = $(this).attr('value');
 				var voteCurrentValue = $('#vote' + postGUID).text();
 
-				//TODO: If userVoted == false && voted > 0
+				//TODO: If userVoted == false
 				$('#vote' + postGUID).text(Number(voteCurrentValue)-1);
+			});
+		</script>
+
+		<!-- parse code -->
+		<script>
+			$(window).load(function() {
+				Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
 			});
 		</script>
 	</body>
