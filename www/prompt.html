@@ -40,28 +40,28 @@
         </div>
 
         <!-- Nav -->
-          <nav id="nav">
-            <ul>
-              <li><a href="index.html">Home</a></li>
-              <li>
-                <a href="">Catalog</a>
-                <ul>
-                  <li><a href="#">All</a></li>
-                  <li><a href="#">Fiction</a></li>
-                  <li><a href="#">Non-Fiction</a></li>
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Adventure</a></li>
-                  <li><a href="#">Mystery</a></li>
-                  <li><a href="#">Romance</a></li>
-                </ul>
-              </li>
-              <li><a href="profile.html">Profile</a></li>
-              <li><a href="writing.html">Write</a></li>
-              <li><a href="create.html">Sign Up</a></li>
-              <li><a href="login.html">Log In</a></li>
-              <li><a href="logout.html">Log Out</a></li>
-            </ul>
-          </nav>
+        <nav id="nav">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li>
+              <a href="">Catalog</a>
+              <ul>
+                <li><a href="#">All</a></li>
+                <li><a href="#">Fiction</a></li>
+                <li><a href="#">Non-Fiction</a></li>
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Adventure</a></li>
+                <li><a href="#">Mystery</a></li>
+                <li><a href="#">Romance</a></li>
+              </ul>
+            </li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="writing.html">Write</a></li>
+            <li><a href="create.html">Sign Up</a></li>
+            <li><a href="login.html"> Log In </a> </li>
+            <li><a href="logout.html">Log Out</a></li>
+          </ul>
+        </nav>
 
       </header>
     </div>
@@ -73,11 +73,12 @@
       <div id="banner" class="box container" style="padding: 1em">
         <div class="row">
           <div class="12u">
-            <form id="login" action="writing.html">
-              Username <input type='text' id='username' placeholder='username'/>
-              Password <input type='password' id='password'/>
-              <a href="#" class="button" id="loginButton">Login </a>
-            </form>
+            <textarea name="prompt" id="prompt" placeholder="Type next paragraph here..." rows="4f"></textarea>
+            <center>
+              <div class="4u">
+                <a class="button" id="promptButton">Submit</a>
+              </div>
+            </center>
           </div>
         </div>
       </div>
@@ -90,10 +91,12 @@ $(window).load(function() {
   Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
 
 });
-$('#loginButton').click(function(e){
-  var user = $('#username').val();
-  var pass = $('#password').val();
-  login(user, pass);
+$('#promptButton').click(function(e){
+  var prompt = new Parse.Object("Prompt");
+  prompt.set("Prompt", JSON.stringify($('#prompt').val()));
+  prompt.set("user", Parse.User.current());
+  prompt.save();
+  $(window).location="/index.html";
 });
     </script>
 

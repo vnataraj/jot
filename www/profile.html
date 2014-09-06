@@ -58,6 +58,8 @@
               <li class="current"><a href="profile.html">Profile</a></li>
               <li><a href="writing.html">Write</a></li>
               <li><a href="create.html">Sign Up</a></li>
+              <li><a href="login.html">Log In</a></li>
+              <li><a href="logout.html">Log Out</a></li>
             </ul>
           </nav>
 
@@ -115,7 +117,6 @@ $(function() {
       contentType: false,
       success: function(data) {
         var user = Parse.User.current();
-        alert("you can find object at "+data.url);
         user.set("picture", data.url);
         user.save();
       },
