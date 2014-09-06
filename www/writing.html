@@ -63,7 +63,6 @@
 				</header>
 			</div>
 
-
 		<!-- Writing Posts -->
 		<div id="messagesDiv"></div>
 		<div id="banner-wrapper">
@@ -82,30 +81,42 @@
 		</div>
 		<br>
 
-
 		<!-- Firebase Code -->
 		<script>
+			var guid = (function() {
+				function s4() {
+					return Math.floor((1 + Math.random()) * 0x10000)
+						.toString(16)
+						.substring(1);
+				}
+				return function() {
+					return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+					s4() + '-' + s4() + s4() + s4();
+				};
+			})();
+
 			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/');
 			$('#submitButton').click(function (e) {
 					var name = "TEST_USERNAME";
 					var text = $('#newPost').val();
-					var votes = 73;
-					myDataRef.push({username: name, text: text, votes: votes});
+					var votes = 0;
+					var postGuid = guid();
+					myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
 					$('#newPost').val('');
 			});
 			myDataRef.on('child_added', function(snapshot) {
 				var message = snapshot.val();
-				displayPosts(message.username, message.text, message.votes);
+				displayPosts(message.username, message.text, message.votes, message.postGuid);
 			});
-			function displayPosts(username, text, votes) {
 
+			function displayPosts(username, text, votes, postGuid) {
 				$('#messagesDiv').append(''+
 				'<div id="features-wrapper">'+
 					'<div class="container">'+
 						'<div class="row">'+
 							'<div class="2u">'+
 								'<center>'+
-									'<div class="box feature" style="padding: 1em"><i class="fa fa-arrow-circle-o-up fa-2x"></i><p><font size="6">'+votes+'</font></p><i class="fa fa-arrow-circle-o-down fa-2x"></i></div>'+
+									'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
 								'</center>'+
 							'</div>'+
 
@@ -121,6 +132,24 @@
 
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 			};
+
+			// Up vote button has been clicked
+			$('body').on('click', '.fa-arrow-circle-o-up', function() {
+  			var postGUID = $(this).attr('value');
+				var voteCurrentValue = $('#vote' + postGUID).text();
+
+				//TODO: If userVoted == false
+				$('#vote' + postGUID).text(Number(voteCurrentValue)+1);
+			});
+
+			// Down vote button has been clicked
+			$('body').on('click', '.fa-arrow-circle-o-down', function() {
+				var postGUID = $(this).attr('value');
+				var voteCurrentValue = $('#vote' + postGUID).text();
+
+				//TODO: If userVoted == false && voted > 0
+				$('#vote' + postGUID).text(Number(voteCurrentValue)-1);
+			});
 		</script>
 	</body>
 </html>
