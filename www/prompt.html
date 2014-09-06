@@ -95,8 +95,13 @@ $('#promptButton').click(function(e){
   var prompt = new Parse.Object("Prompt");
   prompt.set("Prompt", JSON.stringify($('#prompt').val()));
   prompt.set("user", Parse.User.current());
-  prompt.save();
-  $(window).location="/index.html";
+  prompt.save(null, {
+    success: function(prompt) {
+      window.location="index.html";
+    }, error: function(prompt, error) {
+     alert("Error: " + error.code + " " + error.message);
+    } 
+    });
 });
     </script>
 
