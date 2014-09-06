@@ -108,7 +108,12 @@
 						var votes = 0;
 						var postGuid = guid();
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
-						myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+						if (!picture) {
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1"});
+						} else {
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+						}
+
 						$('#newPost').val('');
 					}, function(error){
 						//Handle the error
@@ -230,7 +235,11 @@
 						var votes = 0;
 						var postGuid = guid();
 						var picture = JSON.stringify(Parse.User.current().get("picture"));
-						myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+						if (!picture) {
+							myDataRef.push({username: name, text: text, votes: votes, picture: "http://i.imgur.com/lUMup57.png?1"});
+						} else {
+							myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+						}
 						$('#banner-wrapper-new').remove();
 					}, function(error){
 						//Handle the error
