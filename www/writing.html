@@ -135,6 +135,7 @@
 
 			function displayPosts(username, text, votes, postGuid, picture) {
 				$('#messagesDiv').append(''+
+				'<div id="container-'+postGuid+'">'+
 				'<div id="features-wrapper">'+
 					'<div class="container">'+
 						'<div class="row">'+
@@ -145,13 +146,14 @@
 							'</div>'+
 
 							'<div class="10u">'+
-								'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
+								'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i value="'+postGuid+'" class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
 									'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
 									'<br><strong>'+text+"</strong>"+
 								'</div>'+
 							'</div>'+
 						'</div>'+
 					'</div>'+
+				'</div>'+
 				'</div>');
 
 				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
@@ -198,6 +200,43 @@
 					}
 				});
 			});
+
+			// Plus button has been clicked
+			$('body').on('click', '.fa-plus-circle', function() {
+				var postGuid = $(this).attr('value');
+				$('#container-'+postGuid).append(''+
+				'<div id="banner-wrapper-new">'+
+					'<div id="banner" class="box container" style="padding: 1em">'+
+						'<div class="row">'+
+							'<div class="12u">'+
+									'<textarea name="nextNewPost" id="nextNewPost" placeholder="Type next paragraph here..." rows="4f"></textarea>'+
+									'<center>'+
+										'<div class="4u">'+
+											'<a class="button" id="newSubmitButton" onclick="submitNextPost()">Submit</a>'+
+										'</div>'+
+									'</center>'+
+							'</div>'+
+						'</div>'+
+					'</div>'+
+				'</div>'+
+				'<br>');
+			});
+
+			function submitNextPost() {
+					var user = Parse.User.current();
+					user.fetch().then(function(fetchedUser){
+						var name = fetchedUser.getUsername();
+						var text = $('#nextNewPost').val();
+						var votes = 0;
+						var postGuid = guid();
+						var picture = JSON.stringify(Parse.User.current().get("picture"));
+						myDataRef.push({username: name, text: text, votes: votes, picture: picture});
+						$('#banner-wrapper-new').remove();
+					}, function(error){
+						//Handle the error
+						alert("Authentication error. Please sign in to post.");
+					});
+			}
 		</script>
 
 		<!-- parse code -->
