@@ -20,7 +20,7 @@ function create(username, password, email){
 function login(username, password){
   Parse.User.logIn(username, password, {
     success: function(user) {
-      loginManager(logout(), null);
+      //loginManager(logout(), null);
       $('#login').submit();
     },
     error: function(user, error) {
