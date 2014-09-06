@@ -73,11 +73,6 @@
           <div class="12u">
             <form id="fileupload" name="fileupload" enctype="multipart/form-data" method="post">
               <fieldset>
-                <h3> Username - </h3> <h3 id="userstuff"><script> var user = Parse.User.current(); user.fetch().then(function(fetchedUser){ var name = fetchedUser.getUsername(); }); $('#userstuff').html("name");
-                </script> </h3>
-                  <h3> Profile Picture - </h3> <script> var img = document.createElement("img");
-img.src = JSON.stringify(Parse.User.current().get("picture"));
-document.appendChild(img); </script>
                     <input type="file" name="fileselect" id="fileselect"></input>
               <a href="#" class="button" id="uploadbutton">Update</a>
               </fieldset>
