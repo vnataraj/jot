@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<!--
+	Verti by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Jot - Crowdsourced Authoring</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.dropotron.min.js"></script>
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-desktop.css" />
+		</noscript>
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+		<script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
+		<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+	</head>
+	<body class="homepage">
+
+		<!-- Header -->
+			<div id="header-wrapper">
+				<header id="header" class="container">
+
+					<!-- Logo -->
+						<div>
+							<img src="./images/logo.png" height="150" width="150">
+							<h1>Create. Write. Publish. Print.</h1>
+							<span>A <i>novel</i> way to write books.</span>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<ul>
+								<li class="current"><a href="index.html">Home</a></li>
+								<li>
+									<a href="">Catalog</a>
+									<ul>
+										<li><a href="#">All</a></li>
+										<li><a href="#">Fiction</a></li>
+										<li><a href="#">Non-Fiction</a></li>
+										<li><a href="#">Action</a></li>
+										<li><a href="#">Adventure</a></li>
+										<li><a href="#">Mystery</a></li>
+										<li><a href="#">Romance</a></li>
+									</ul>
+								</li>
+								<li><a href="blank.html">Profile</a></li>
+								<li><a href="blank.html">Write</a></li>
+								<li><a href="blank.html">Sign Up</a></li>
+							</ul>
+						</nav>
+
+				</header>
+			</div>
+
+
+		<!-- Writing Posts -->
+		<center>
+			<input type='text' id='nameInput' placeholder='Name'>
+			<input type='text' id='messageInput' placeholder='Message'>
+		</center>
+		<div id="messagesDiv"></div>
+
+
+		<!-- Firebase Code -->
+		<script>
+			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/');
+			$('#messageInput').keypress(function (e) {
+				if (e.keyCode == 13) {
+					var name = $('#nameInput').val();
+					var text = $('#messageInput').val();
+					myDataRef.push({name: name, text: text});
+					$('#messageInput').val('');
+				}
+			});
+			myDataRef.on('child_added', function(snapshot) {
+				var message = snapshot.val();
+				displayChatMessage(message.name, message.text);
+			});
+			function displayChatMessage(name, text) {
+				$('#messagesDiv').append('<div id="banner-wrapper"><div id="banner" class="box container"><div class="row"><div class="12u"><h6>'+name+'</h6></div></div></div><br>');
+				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+			};
+		</script>
+	</body>
+</html>
