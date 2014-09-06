@@ -65,17 +65,17 @@
     </div>
 
 
-    <!-- Signing Up -->
+    <!-- logging in -->
     <div id="messagesDiv"></div>
     <div id="banner-wrapper">
       <div id="banner" class="box container" style="padding: 1em">
         <div class="row">
           <div class="12u">
-            <form id="create" action="thanks.html">
-              Username <input type='text' id='username' placeholder='username'/>
-              Password <input type='text' id='password' placeholder='password'/>
-              Email <input type='text' id='email' placeholder='username@email.com'/>
-              <a href="#" class="button" id="signUpButton">Sign Up </a>
+            <form id="fileupload" name="fileupload" enctype="multipart/form-data" method="post">
+              <fieldset>
+                    <input type="file" name="fileselect" id="fileselect"></input>
+              <a href="#" class="button" id="uploadbutton">Update</a>
+              </fieldset>
             </form>
           </div>
         </div>
@@ -86,36 +86,49 @@
     <!-- parse code -->
     <script>
 $(window).load(function() {
-    alert("parse initialized!");
   Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
+});
+$(function() {
+  var file;
 
-});
-$('#signUpButton').click(function(e){
-  alert("button clicked!!!!");
-  var user = $('#username').val();
-  var pass = $('#password').val();
-  var emai = $('#email').val();
-  create(user, pass, emai);
-});
-/*function create(username, password, email){
-  var user = new Parse.User();
-  user.set("username", username);
-  user.set("password", password);
-  user.set("email", email);
-  alert("here's a user!");
-  // other fields can be set just like with Parse.Object
-  user.signUp(null, {
-    success: function(user) {
-      $('#create').submit();
-    },
-    error: function(user, error) {
-      // Show the error message somewhere and let the user try again.
-      alert("Error: " + error.code + " " + error.message);
-    }
+  // Set an event listener on the Choose File field.
+  $('#fileselect').bind("change", function(e) {
+    var files = e.target.files || e.dataTransfer.files;
+    // Our file var now holds the selected file
+    file = files[0];
   });
-};
-*/
-    </script>
 
+  // This function is called when the user clicks on Upload to Parse. It will create the REST API request to upload this image to Parse.
+  $('#uploadbutton').click(function() {
+    var serverUrl = 'https://api.parse.com/1/files/' + file.name;
+
+    $.ajax({
+      type: "POST",
+      beforeSend: function(request) {
+        request.setRequestHeader("X-Parse-Application-Id", 'zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY');
+        request.setRequestHeader("X-Parse-REST-API-Key", 'RHzdAnljSPQBY9fTPL1F3dxmfw6LSi8WVMtb6SPV');
+        request.setRequestHeader("Content-Type", file.type);
+      },
+      url: serverUrl,
+      data: file,
+      processData: false,
+      contentType: false,
+      success: function(data) {
+        var user = Parse.User.current();
+        alert("you can find object at "+data.url);
+        user.set("picture", data.url);
+        user.save();
+      },
+      error: function(data) {
+        var obj = jQuery.parseJSON(data);
+        alert(obj.error);
+      }
+    });
+  });
+
+
+});
+
+    </script>
   </body>
 </html>
