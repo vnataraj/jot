@@ -107,9 +107,8 @@
 						var text = $('#newPost').val();
 						var votes = 0;
 						var postGuid = guid();
-						//myDataRef.push({username: name, text: text, votes: votes, postGuid: postGuid});
-						myDataRef.push({username: name, text: text, votes: votes});
-						//myDataRef.child(postGuid).set({username: name, text: text, votes: votes, postGuid: postGuid});
+						var picture = JSON.stringify(Parse.User.current().get("picture"));
+						myDataRef.push({username: name, text: text, votes: votes, picture: picture});
 						$('#newPost').val('');
 					}, function(error){
 						//Handle the error
@@ -122,9 +121,8 @@
 				var postGuid = snapshot.name();
 
 				// Add the vote data for the posting user
-				var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
 				myVotesDataRef.child(postGuid).once('value', function(vote_snapshot) {
-					var hasVoted = votes_snapshot.child('voted').val();
+					var hasVoted = vote_snapshot.child('voted').val();
 					if (hasVoted != null) {
 					 	myVotesDataRef.child(postGuid).set({username: message.username, voted: hasVoted});
 					} else {
@@ -132,10 +130,10 @@
 					}
 				});
 
-				displayPosts(message.username, message.text, message.votes, postGuid);
+				displayPosts(message.username, message.text, message.votes, postGuid, message.picture);
 			});
 
-			function displayPosts(username, text, votes, postGuid) {
+			function displayPosts(username, text, votes, postGuid, picture) {
 				$('#messagesDiv').append(''+
 				'<div id="features-wrapper">'+
 					'<div class="container">'+
@@ -148,7 +146,7 @@
 
 							'<div class="10u">'+
 								'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
-									'<img src="images/portrait.png" height="50px" width="50px"/><br>'+username+'<hr>'+
+									'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
 									'<br><strong>'+text+"</strong>"+
 								'</div>'+
 							'</div>'+
@@ -173,8 +171,9 @@
 						myVotesDataRef.child(postGUID).child('voted').set(true);
 						// Set num of votes up one
 						var myPostsDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
-						myPostsDataRef.child(postGUID).child('votes').set(Number(voteCurrentValue)+1);
-						$('#vote' + postGUID).text(Number(voteCurrentValue)+1);
+						var newVoteCount = Number(voteCurrentValue)+1;
+						myPostsDataRef.child(postGUID).child('votes').set(newVoteCount);
+						$('#vote' + postGUID).text(newVoteCount);
 					}
 				});
 			});
@@ -184,8 +183,20 @@
 				var postGUID = $(this).attr('value');
 				var voteCurrentValue = $('#vote' + postGUID).text();
 
-				//TODO: If userVoted == false
-				$('#vote' + postGUID).text(Number(voteCurrentValue)-1);
+				// If userVoted == false, then downvote
+				var myVotesDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/votes');
+				myVotesDataRef.child(postGUID).once('value', function(snapshot) {
+					var hasVoted = snapshot.child('voted').val();
+					if (!hasVoted) {
+						// Set firebase hasVoted to true
+						myVotesDataRef.child(postGUID).child('voted').set(true);
+						// Set num of votes down one
+						var myPostsDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/posts');
+						var newVoteCount = Number(voteCurrentValue)-1;
+						myPostsDataRef.child(postGUID).child('votes').set(newVoteCount);
+						$('#vote' + postGUID).text(newVoteCount);
+					}
+				});
 			});
 		</script>
 
