@@ -100,7 +100,7 @@ $('#promptButton').click(function(e){
   prompt.set("title", JSON.stringify($('#title').val()));
   prompt.save(null, {
     success: function(prompt) {
-      window.location="writing.html";
+      window.location=encodeURI("writing.html?title="+JSON.stringify($('#title').val()));
     }, error: function(prompt, error) {
      alert("Error: " + error.code + " " + error.message);
     } 
