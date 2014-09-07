@@ -149,20 +149,18 @@
       <script>
 $(window).load(function() {
   Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
-  var Prompt = new(Parse.Object.extend("Prompt"));
-  var query = new Parse.Query("Prompt");
-  missingmm(query);
-  catscc(query);
-  tkamm(query);
+  missingmm();
+  catscc();
+  tkamm();
 });
-function missingmm(query){
-  query = query.equalTo('title', $('#missingmen').val());
-  
-  query.find({
+function missingmm(){
+  var Prompt1 = new(Parse.Object.extend("Prompt"));
+  var query1 = new Parse.Query("Prompt");
+  query1 = query1.equalTo('title', "Missing Men");
+  query1.find({
     success: function(results){
   var object = results[0];
   var synopsis = object.get('Prompt');
-  alert("this is the object "+object);
   $('#missing').html(synopsis);
     },
     error: function(error){
@@ -170,8 +168,10 @@ function missingmm(query){
     }
   });
 }
-function catscc(query){
-  query = query.equalTo('title', $('#catscradle').val());
+function catscc(){
+  var Prompt = new(Parse.Object.extend("Prompt"));
+  var query = new Parse.Query("Prompt");
+  query = query.equalTo('title', "Cats Cradle");
   query.find({
     success: function(results){
   var object = results[0];
@@ -185,8 +185,10 @@ function catscc(query){
 }
 
 function tkamm(query){
-  query = query.equalTo('title', $('#tkam').val());
-  query.find({
+  var Prompt2 = new(Parse.Object.extend("Prompt"));
+  var query2 = new Parse.Query("Prompt");
+  query2 = query2.equalTo('title', "To Kill a Mockingbird");
+  query2.find({
     success: function(results){
   var object = results[0];
   var synopsis = object.get('Prompt');
