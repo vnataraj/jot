@@ -200,7 +200,7 @@
 			function displayPosts(username, text, votes, postGuid, picture, isParent, level) {
 
 				// Check if priority changed a level
-				if (level == null || level != prevNum) {
+				if (level != prevNum) {
 					prevNum = level;
 					isParent = true;
 				} else {
