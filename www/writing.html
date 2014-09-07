@@ -65,7 +65,7 @@
 				</header>
 			</div>
 
-			<!-- Synopsis -->
+			<!-- Title -->
 			<div id="banner-wrapper">
 				<div id="banner" class="box container" style="padding: 1em">
 								<center>
@@ -78,6 +78,15 @@
 					<a href="./preview.html" class="button" id="preview" style="background-color: #449d44;">Preview</a>
 					<br>
 				</center>
+				<br>
+
+				<!-- Synopsis -->
+				<div id="banner-wrapper">
+					<div id="banner" class="box container" style="padding: 1em">
+								<span>Synopsis:</span>
+								<h6 id="synopsis"></h6>
+						</div>
+				</div>
 
 		<!-- Writing Posts -->
 		<div id="messagesDiv"></div>
@@ -100,13 +109,14 @@
 
 		<!-- Firebase Code -->
 		<script>
+			var title = getParameterByName('title');
+
 			function getParameterByName(name) {
     		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     		var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     		return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 			}
-			var title = "A Tale of Two Cities";
 
 			var myDataRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/'+title+'/posts');
 			var myPriorityRef = new Firebase('https://radiant-inferno-4410.firebaseio.com/'+title+'/priority');
@@ -419,6 +429,24 @@
 				Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
 				// Get the book title from the query params
 				$('#bookTitle').text(title);
+
+				var Prompt = new (Parse.Object.extend("Prompt"));
+				var query = new Parse.Query("Prompt");
+				query = query.equalTo('title', title);
+
+				query.find({
+    success: function(results){
+      for (var i = 0; i < results.length; i++) {
+        var object = results[i];
+        var synopsis = object.get('Prompt');
+				$('#synopsis').html(synopsis);
+      }
+    },
+     error: function(error){
+       alert("Error : " + error.code + " " + error.message);
+     }
+    });
+
 			});
 		</script>
 	</body>
