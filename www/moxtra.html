@@ -76,36 +76,31 @@
         <div class="row">
           <div class="12u">
             <h2> Moxtra Chat </h2>
+            <div id="container" style="position:absolute; top:100px; left:150px;">
+              DIV tag
+            </div>
+            <h3><a href="javascript:start();">Start Meet</a> within DIV</h3>
             <script type="text/javascript">
-var options = {
-      binder_id: BINDER_ID,
-      iframe: true,
-          tagid4iframe: "div",
-            iframewidth: "300px",
-                iframeheight: "900px",
-                  autostart_meet: true,
-                      autostart_note: false,
-                        start_chat: function(event) {
-                                  alert("Chat started session Id: " + event.session_id);
-                                      },
-                            start_meet: function(event) {
-                                      alert("Meet started session key: " + event.session_key + " session id: " + event.session_id);
-                                          },
-                              end_meet: function(event) {
-                                        alert("Meet end event");
-                                            },
-                                  invite_member: function(event) {
-                                            alert("Invite member into binder Id: " + event.binder_id);
-                                                },
-                                    request_note: function(event) {
-                                              alert("Note start request");
-                                                  },
-                                        error: function(event) {
-                                                  alert("Chat error code: " + event.error_code + " error message: " + event.error_message);
-                                                      }
-};
+function start() {
+  var options = {
+    iframe: true,
+    extension: { "show_dialogs": { "meet_invite": true } },
+    tagid4iframe: "container",
+    iframewidth: "300px",
+    iframeheight: "900px",
+    start_meet: function(event) {
+      alert("session key: " + event.session_key + " session id: " + event.session_id);
+    },
+    error: function(event) {
+      alert("error code: " + event.error_code + " message: " + event.error_message);
+    },
+    end_meet: function(event) {
+      alert("Meet end event");
+    }
+  };
 
-Moxtra.chat(options);
+  Moxtra.meet(options);
+}
             </script>
           </div>
         </div>
@@ -118,11 +113,11 @@ Moxtra.chat(options);
 $(window).load(function() {
   Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
   if(Parse.User.current()){
-   document.getElementById("profile").style.display=none;
-   $('#writing').show();
-   $('#logout').show();
-   $('#create').hide();
-   $('#login').hide();
+    document.getElementById("profile").style.display=none;
+    $('#writing').show();
+    $('#logout').show();
+    $('#create').hide();
+    $('#login').hide();
   };
   else{
     $('#profile').hide();
