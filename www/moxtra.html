@@ -57,9 +57,11 @@
                 <li><a href="#">Romance</a></li>
               </ul>
             </li>
-            <li><a href="profile.html">Profile</a></li>
-            <li><a href="writing.html">Write</a></li>
-            <li><a href="create.html">Sign Up</a></li>
+            <li><a href="profile.html" id="profile">Profile</a></li>
+            <li><a href="writing.html" id="writing">Write</a></li>
+            <li><a href="create.html" id="create">Sign Up</a></li>
+            <li><a href="login.html" id="login">Log In</a></li>
+            <li><a href="logout.html" id="logout">Log Out</a></li>
           </ul>
         </nav>
 
@@ -73,30 +75,37 @@
       <div id="banner" class="box container" style="padding: 1em">
         <div class="row">
           <div class="12u">
-            <h2> Moxxtra Chat </h2>
-            <input type="moxtra-meet-iframe" id="meet-starter" name="start-meet" style="visibility: hidden;" />
+            <h2> Moxtra Chat </h2>
             <script type="text/javascript">
-meet = document.getElementById("meet-starter");
-Moxtra.addListener(meet, "MeetSuccess",
-    function(e) {
-      alert("Meet session key: " + e.session_key + " Meet session id: " + e.session_id);
-    });
-Moxtra.addListener(meet, "MeetError",
-    function(e) {
-      alert("Meet error code: " + e.error_code + " error message: " + e.error_message);
-    });
-Moxtra.addListener(meet, "MeetSaved",
-    function(e) {
-      alert("Meet saved on binder: " + e..binder_id);
-    });
-Moxtra.addListener(meet, "MeetInvite",
-    function(e) {
-      alert("Meet session key: " + e.session_key + " Meet session id: " + e.session_id);
-    });
-Moxtra.addListener(meet, "MeetEnd",
-    function(e) {
-      alert("Meet Ended");
-    });
+var options = {
+      binder_id: BINDER_ID,
+      iframe: true,
+          tagid4iframe: "div",
+            iframewidth: "300px",
+                iframeheight: "900px",
+                  autostart_meet: true,
+                      autostart_note: false,
+                        start_chat: function(event) {
+                                  alert("Chat started session Id: " + event.session_id);
+                                      },
+                            start_meet: function(event) {
+                                      alert("Meet started session key: " + event.session_key + " session id: " + event.session_id);
+                                          },
+                              end_meet: function(event) {
+                                        alert("Meet end event");
+                                            },
+                                  invite_member: function(event) {
+                                            alert("Invite member into binder Id: " + event.binder_id);
+                                                },
+                                    request_note: function(event) {
+                                              alert("Note start request");
+                                                  },
+                                        error: function(event) {
+                                                  alert("Chat error code: " + event.error_code + " error message: " + event.error_message);
+                                                      }
+};
+
+Moxtra.chat(options);
             </script>
           </div>
         </div>
@@ -108,10 +117,25 @@ Moxtra.addListener(meet, "MeetEnd",
     <script>
 $(window).load(function() {
   Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
+  if(Parse.User.current()){
+   document.getElementById("profile").style.display=none;
+   $('#writing').show();
+   $('#logout').show();
+   $('#create').hide();
+   $('#login').hide();
+  };
+  else{
+    $('#profile').hide();
+    $('#writing').hide();
+    $('#logout').hide();
+    $('#create').show();
+    $('#login').show();
+  };
 });
 $('#signUpButton').click(function(e){
   create($('#username').val(), $('#password').val(), $('#email').val());
 });
+
     </script>
   </body>
 </html>
