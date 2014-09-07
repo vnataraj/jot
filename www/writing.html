@@ -365,6 +365,7 @@
 							// Update the priority in firebase and increment it by one
 							priority = priority+1;
 							myPriorityRef.child('priority').set(priority);
+							location.reload();
 						} else {
 							myDataRef.push({username: name, text: text, votes: votes, picture: picture, priority: newPostPrio, parent: false, level: postLevel}).setPriority(newPostPrio);
 							// Update the priority in firebase and increment it by one
