@@ -333,7 +333,7 @@
 									'<textarea name="nextNewPost" id="nextNewPost" placeholder="Type next paragraph here..." rows="4f"></textarea>'+
 									'<center>'+
 										'<div class="4u">'+
-											'<a class="button" id="newSubmitButton" onclick="submitNextPost('+postPrio+','+postLevel+')">Submit</a>'+
+											'<br><a class="button" id="newSubmitButton" onclick="submitNextPost('+postPrio+','+postLevel+')">Submit</a>'+
 										'</div>'+
 									'</center>'+
 							'</div>'+
@@ -423,7 +423,7 @@
 		<script>
 			$(window).load(function() {
 				Parse.initialize("zZBe1MJTg2fRmx62W2jJgEpSaTczz5kEdUV3tEvY", "q9XV1z0y1YAHI8aGtWFKD3UkPIkwRaOPtFLVwOWF");
-				$('#preview').attr("href", './writing.html?title='+title);
+				$('#preview').attr("href", './preview.html?title='+title);
 				// Get the book title from the query params
 				$('#bookTitle').text(title);
 
