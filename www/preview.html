@@ -74,23 +74,13 @@
 					</div>
 				</div>
 				<center>
-					<a href="./preview.html" class="button" id="preview" style="background-color: #449d44; top: -17px;">Preview</a>
+					<a href="./writing.html" class="button" id="preview" style="background-color: #449d44; top: -17px;">Edit</a>
 				</center>
 
 		<!-- Writing Posts -->
 		<div id="messagesDiv"></div>
 		<div id="banner-wrapper">
 			<div id="banner" class="box container" style="padding: 1em">
-				<div class="row">
-					<div class="12u">
-							<textarea name="newPost" id="newPost" placeholder="Type next paragraph here..." rows="4f"></textarea>
-							<center>
-								<div class="4u">
-									<a class="button" id="submitButton">Submit</a>
-								</div>
-							</center>
-					</div>
-				</div>
 			</div>
 		</div>
 		<br>
@@ -185,68 +175,9 @@
 					}
 				});
 
-				displayPosts(message.username, message.text, message.votes, postGuid, message.picture, message.parent, message.level);
+				compilePosts(message.username, message.text, message.votes, postGuid, message.picture, message.parent, message.level);
 			});
 
-			function displayPosts(username, text, votes, postGuid, picture, isParent, level) {
-
-				// Check if priority changed a level
-				if (level == null || level != prevNum) {
-					prevNum = level;
-					isParent = true;
-				} else {
-					isParent = false;
-				}
-
-				if (isParent == false) {
-					$('#messagesDiv').append(''+
-					'<div id="container-'+postGuid+'" style="opacity: 0.5;">'+
-					'<div id="features-wrapper">'+
-						'<div class="container">'+
-							'<div class="row">'+
-								'<div class="2u">'+
-									'<center>'+
-										'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
-										'</center>'+
-										'</div>'+
-										'<div class="3u"></div>'+
-
-								'<div class="7u">'+
-									'<div class="box feature" style="padding: 1em">'+
-										'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
-										'<br><strong>'+text+"</strong>"+
-										'</div>'+
-									'</div>'+
-								'</div>'+
-							'</div>'+
-						'</div>'+
-					'</div>');
-				} else {
-					$('#messagesDiv').append(''+
-					'<div id="container-'+postGuid+'">'+
-					'<div id="features-wrapper">'+
-						'<div class="container">'+
-							'<div class="row">'+
-								'<div class="2u">'+
-									'<center>'+
-										'<div class="box feature" style="padding: 1em"><a><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-up fa-2x"></i></a><p><font id="vote'+postGuid+'" size="6">'+votes+'</font></p><i value="'+postGuid+'" class="button fa fa-arrow-circle-o-down fa-2x"></i></div>'+
-										'</center>'+
-										'</div>'+
-
-								'<div class="10u">'+
-									'<div class="box feature" style="padding: 1em"><a style="cursor:pointer"><i value="'+postGuid+'" class="fa fa-plus-circle fa-2x" style="float: right;"></i></a>'+
-										'<img src='+picture+' height="50px" width="50px"/><br>'+username+'<hr>'+
-										'<br><strong>'+text+"</strong>"+
-										'</div>'+
-									'</div>'+
-								'</div>'+
-							'</div>'+
-						'</div>'+
-					'</div>');
-				}
-
-				$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
-			};
 
 			// Up vote button has been clicked
 			$('body').on('click', '.fa-arrow-circle-o-up', function() {
