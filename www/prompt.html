@@ -73,7 +73,7 @@
       <div id="banner" class="box container" style="padding: 1em">
         <div class="row">
           <div class="12u">
-            <b>Title<b> <input type='text' id='title' placeholder="Title" /> 
+            <b>Title</b> <input type='text' id='title' placeholder="Title" /> 
                 <br> <br> 
             <textarea name="prompt" id="prompt" placeholder="Type next paragraph here..." rows="4f"></textarea>
             <center>
@@ -95,9 +95,9 @@ $(window).load(function() {
 });
 $('#promptButton').click(function(e){
   var prompt = new Parse.Object("Prompt");
-  prompt.set("Prompt", JSON.stringify($('#prompt').val()));
+  prompt.set("Prompt", $('#prompt').val());
   prompt.set("user", Parse.User.current());
-  prompt.set("title", JSON.stringify($('#title').val()));
+  prompt.set("title", $('#title').val());
   prompt.save(null, {
     success: function(prompt) {
       window.location=encodeURI("writing.html?title="+JSON.stringify($('#title').val()));
